@@ -16,3 +16,5 @@ To install the package, run the following code in R
 ```r
 devtools::install_github("guyschvitz/gsfuns")
 ```
+
+## Usage
