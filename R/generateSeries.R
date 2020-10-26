@@ -12,28 +12,14 @@
 ##'
 ##' @export
 ##'
-generateSeries <- function(data, start, stop, step=1, timeint = "day", varname = "generate_series"){
-  if (inherits(data[,start], "Date")){
-    step <- paste(step, timeint, sep=" ")
-  } else {
+generateSeries <- function(data, start, stop, step = 1, timeint = "day", varname = "series"){
+  date <- inherits(data[,start], "Date")
+  if(date){
+    step <- paste(step, timeint)
   }
-  data <- as.data.frame(data)
-  data$id.temp <- seq_along(1:nrow(data))
-  data.rest <- data[,!names(data)%in%c(start, stop)]
-  data.out <- data.frame(var = unlist(Map(`seq`, data[,start], data[,stop], by=step)),
-                       id.temp = rep(data[,"id.temp"], unlist(
-                         Map(function(x,y){length(seq(x,y, by = step))},
-                             data[,start], data[,stop]
-                         )))
-  )
-  data.out <- merge(data.out, data.rest, by.x="id.temp", by.y="id.temp",
-                  all.x=T)[, union(names(data.rest), names(data.out))]
-  data.out <- data.out[,!names(data.out)%in%c("id.temp")]
-  names(data.out)[ncol(data.out)] <- varname
-
-  if (inherits(data[,start], "Date")){
-    data.out[,var] <- as.Date(data.out[,var], origin = "1970-01-01")
-  } else {
-  }
-  return(data.out)
+  seq.out <- Map(seq, data[, start], data[, stop], step)
+  data.out <- as.data.frame(lapply(data, rep, sapply(seq.out, length)))
+  data.out$var <- if(date){as.Date(unlist(seq.out))} else {unlist(seq.out)}
+  names(data.out)[which(names(data.out)=="var")] <- varname
+  return(data.out[,!names(data.out)%in% c(start, stop)])
 }
