@@ -13,6 +13,7 @@
 ##' @export
 ##'
 generateSeries <- function(data, start, stop, step = 1, timeint = "day", varname = "series"){
+  data <- as.data.frame(data)
   date <- inherits(data[,start], "Date")
   if(date){
     step <- paste(step, timeint)

@@ -9,3 +9,5 @@ cs <- cshp(as.Date("1980-01-01"))
 cs  %>% dplyr::filter(gwcode == 565)
 
 mapview(cs[,"gwcode"])
+
+cshp()
